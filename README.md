@@ -2,7 +2,7 @@
  Elasticsearch Client Learning
 
 ## Project Spec
-* Java JDK 8
+* Java JDK 17
 * Elasticsearch v7.17.18
 * Elasticsearch Client v7.17.18
 
