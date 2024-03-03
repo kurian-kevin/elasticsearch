@@ -1,16 +1,16 @@
 package com.learning.elastic.search;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.search.Hit;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch._types.FieldValue;
+import org.opensearch.client.opensearch._types.query_dsl.MatchQuery;
+import org.opensearch.client.opensearch._types.query_dsl.Query;
+import org.opensearch.client.opensearch.core.SearchRequest;
+import org.opensearch.client.opensearch.core.SearchResponse;
+import org.opensearch.client.opensearch.core.search.Hit;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +31,13 @@ public final class SearchRecord {
 
         String indexName = "record";
 
-        try (ElasticsearchTransport transport = new RestClientTransport(
+        try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            ElasticsearchClient esClient = new ElasticsearchClient(transport);
+            OpenSearchClient esClient = new OpenSearchClient(transport);
 
             MatchQuery matchQuery = MatchQuery.of(t -> t
                     .field("job")
-                    .query("Developer")
+                    .query(FieldValue.of("Developer"))
             );
 
             Query query = Query.of(q -> q.match(matchQuery));

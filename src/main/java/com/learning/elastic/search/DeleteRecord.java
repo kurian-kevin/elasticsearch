@@ -1,13 +1,12 @@
 package com.learning.elastic.search;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.DeleteRequest;
-import co.elastic.clients.elasticsearch.core.DeleteResponse;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.ElasticsearchTransport;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
+import org.opensearch.client.RestClient;
+import org.opensearch.client.json.jackson.JacksonJsonpMapper;
+import org.opensearch.client.opensearch.OpenSearchClient;
+import org.opensearch.client.opensearch.core.DeleteRequest;
+import org.opensearch.client.opensearch.core.DeleteResponse;
+import org.opensearch.client.transport.rest_client.RestClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +26,9 @@ public final class DeleteRecord {
         String indexName = "record";
         String documentId = "1";
 
-        try (ElasticsearchTransport transport = new RestClientTransport(
+        try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            ElasticsearchClient esClient = new ElasticsearchClient(transport);
+            OpenSearchClient esClient = new OpenSearchClient(transport);
 
             DeleteRequest request = DeleteRequest.of(g -> g
                     .index(indexName)

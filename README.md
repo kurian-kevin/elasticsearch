@@ -4,8 +4,9 @@
 ## Project Spec
 * Java JDK 17
 * Elasticsearch v7.17.18
-* Elasticsearch Client v7.17.18
-* Client Doc: https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/7.17/index.html
+* Opensearch Rest Client v2.12.0
+* Opensearch Java v2.9.0
+* Client Doc: https://opensearch.org/docs/latest/clients/java/
 
 ## Repos:
 * DockerHub: https://hub.docker.com/_/elasticsearch
@@ -15,14 +16,14 @@
 * Maven:
 ```xml
 <dependency>
-  <groupId>co.elastic.clients</groupId>
-  <artifactId>elasticsearch-java</artifactId>
-  <version>7.17.18</version>
+  <groupId>org.opensearch.client</groupId>
+  <artifactId>opensearch-rest-client</artifactId>
+  <version>2.12.0</version>
 </dependency>
 <dependency>
-  <groupId>com.fasterxml.jackson.core</groupId>
-  <artifactId>jackson-databind</artifactId>
-  <version>2.12.3</version>
+  <groupId>org.opensearch.client</groupId>
+  <artifactId>opensearch-java</artifactId>
+  <version>2.9.0</version>
 </dependency>
 ```
 ## Startup
