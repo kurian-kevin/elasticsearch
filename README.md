@@ -3,8 +3,8 @@
 
 ## Project Spec
 * Java JDK 17
-* Elasticsearch v7.17.18
-* Elasticsearch Client v7.17.18
+* Elasticsearch Server v7.17.18
+* Elasticsearch Java v7.17.18
 * Client Doc: https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/7.17/index.html
 
 ## Repos:

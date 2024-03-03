@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.learning.elastic.search</groupId>
-    <artifactId>es7-esc-j17</artifactId>
+    <artifactId>es7-esc7-j17</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>es7-esc-j17</name>
+    <name>es7-esc7-j17</name>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
