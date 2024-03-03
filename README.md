@@ -5,18 +5,24 @@
 * Java JDK 17
 * Elasticsearch v7.17.18
 * Elasticsearch Client v7.17.18
+* Client Doc: https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/7.17/index.html
 
 ## Repos:
 * DockerHub: https://hub.docker.com/_/elasticsearch
   * docker pull elasticsearch:7.17.18
-* Docker Elastic: https://www.docker.elastic.co/r/elasticsearch
+* Elastic: https://www.docker.elastic.co/r/elasticsearch
   * docker pull docker.elastic.co/elasticsearch/elasticsearch:7.17.18
-* Maven: https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client
+* Maven:
 ```xml
 <dependency>
-    <groupId>org.elasticsearch.client</groupId>
-    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-    <version>7.17.18</version>
+  <groupId>co.elastic.clients</groupId>
+  <artifactId>elasticsearch-java</artifactId>
+  <version>7.17.18</version>
+</dependency>
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.12.3</version>
 </dependency>
 ```
 ## Startup

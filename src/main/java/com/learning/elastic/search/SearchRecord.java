@@ -1,30 +1,26 @@
 package com.learning.elastic.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public final class SearchRecord {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchRecord.class);
-
-    /**
-     * The hostname of the Elasticsearch server.
-     */
-    private static final String ELASTICSEARCH_HOST = "localhost";
-
-    /**
-     * The port number where Elasticsearch is listening.
-     */
-    private static final int ELASTICSEARCH_PORT = 9200;
 
     /**
      * Main method to search records in Elasticsearch.
@@ -35,21 +31,31 @@ public final class SearchRecord {
 
         String indexName = "record";
 
-        try (RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, "http")))) {
+        try (ElasticsearchTransport transport = new RestClientTransport(
+                RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
+            ElasticsearchClient esClient = new ElasticsearchClient(transport);
 
-            SearchRequest searchRequest = new SearchRequest(indexName);
-            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-            searchSourceBuilder.query(QueryBuilders.matchQuery("job", "Developer"));
-            searchRequest.source(searchSourceBuilder);
-            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            MatchQuery matchQuery = MatchQuery.of(t -> t
+                    .field("job")
+                    .query("Developer")
+            );
 
-            SearchHit[] searchHits = searchResponse.getHits().getHits();
-            for (SearchHit hit : searchHits) {
-                LOGGER.info("Document: {}", hit.getSourceAsString());
+            Query query = Query.of(q -> q.match(matchQuery));
+
+            SearchRequest request = SearchRequest.of(s -> s
+                    .index(indexName)
+                    .query(query)
+            );
+
+            SearchResponse<Map> response = esClient.search(request, Map.class);
+
+            List<Hit<Map>> hits = response.hits().hits();
+            for (Hit<Map> hit : hits) {
+                String sourceAsString = hit.source().toString();
+                LOGGER.info("Document: {}", sourceAsString);
             }
-        } catch (Exception e) {
-            LOGGER.error("Exception: ", e);
+        } catch (IOException e) {
+            LOGGER.error("IOException: ", e);
         }
     }
 

@@ -1,27 +1,22 @@
 package com.learning.elastic.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.GetRequest;
+import co.elastic.clients.elasticsearch.core.GetResponse;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Map;
 
 public final class ReadRecord {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReadRecord.class);
-
-    /**
-     * The hostname of the Elasticsearch server.
-     */
-    private static final String ELASTICSEARCH_HOST = "localhost";
-
-    /**
-     * The port number where Elasticsearch is listening.
-     */
-    private static final int ELASTICSEARCH_PORT = 9200;
 
     /**
      * Main method to read a record in Elasticsearch.
@@ -33,20 +28,24 @@ public final class ReadRecord {
         String indexName = "record";
         String documentId = "1";
 
-        try (RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, "http")))) {
+        try (ElasticsearchTransport transport = new RestClientTransport(
+                RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
+            ElasticsearchClient esClient = new ElasticsearchClient(transport);
 
-            GetRequest getRequest = new GetRequest(indexName, documentId);
-            GetResponse getResponse = client.get(getRequest, RequestOptions.DEFAULT);
+            GetRequest request = GetRequest.of(g -> g
+                    .index(indexName)
+                    .id(documentId));
 
-            if (getResponse.isExists()) {
-                String sourceAsString = getResponse.getSourceAsString();
+            GetResponse<Map> response = esClient.get(request, Map.class);
+
+            if (response.found()) {
+                String sourceAsString = response.source().toString();
                 LOGGER.info("Document: {}", sourceAsString);
             } else {
                 LOGGER.warn("Document not found");
             }
-        } catch (Exception e) {
-            LOGGER.error("Exception: ", e);
+        } catch (IOException e) {
+            LOGGER.error("IOException: ", e);
         }
     }
 

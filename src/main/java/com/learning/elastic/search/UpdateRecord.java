@@ -1,30 +1,23 @@
 package com.learning.elastic.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.UpdateRequest;
+import co.elastic.clients.elasticsearch.core.UpdateResponse;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class UpdateRecord {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateRecord.class);
-
-    /**
-     * The hostname of the Elasticsearch server.
-     */
-    private static final String ELASTICSEARCH_HOST = "localhost";
-
-    /**
-     * The port number where Elasticsearch is listening.
-     */
-    private static final int ELASTICSEARCH_PORT = 9200;
 
     /**
      * Main method to update a record in Elasticsearch.
@@ -36,19 +29,24 @@ public final class UpdateRecord {
         String indexName = "record";
         String documentId = "1";
 
-        try (RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, "http")))) {
+        try (ElasticsearchTransport transport = new RestClientTransport(
+                RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
+            ElasticsearchClient esClient = new ElasticsearchClient(transport);
 
             Map<String, Object> map = new HashMap<>();
             map.put("job", "Backend Developer");
-            UpdateRequest updateRequest = new UpdateRequest(indexName, documentId)
-                    .doc(map)
-                    .docAsUpsert(true);
-            UpdateResponse updateResponse = client.update(updateRequest, RequestOptions.DEFAULT);
 
-            LOGGER.info("Update Response: {}", updateResponse.getResult());
-        } catch (Exception e) {
-            LOGGER.error("Exception: ", e);
+            UpdateRequest<Map<String, Object>, Map<String, Object>> request = UpdateRequest.of(u -> u
+                    .index(indexName)
+                    .id(documentId)
+                    .doc(map)
+            );
+
+            UpdateResponse<Map<String, Object>> response = esClient.update(request, Map.class);
+
+            LOGGER.info("Update Response: {}", response.result());
+        } catch (IOException e) {
+            LOGGER.error("IOException: ", e);
         }
     }
 

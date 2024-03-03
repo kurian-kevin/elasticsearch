@@ -1,27 +1,21 @@
 package com.learning.elastic.search;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.DeleteRequest;
+import co.elastic.clients.elasticsearch.core.DeleteResponse;
+import co.elastic.clients.json.jackson.JacksonJsonpMapper;
+import co.elastic.clients.transport.ElasticsearchTransport;
+import co.elastic.clients.transport.rest_client.RestClientTransport;
 import org.apache.http.HttpHost;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public final class DeleteRecord {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteRecord.class);
-
-    /**
-     * The hostname of the Elasticsearch server.
-     */
-    private static final String ELASTICSEARCH_HOST = "localhost";
-
-    /**
-     * The port number where Elasticsearch is listening.
-     */
-    private static final int ELASTICSEARCH_PORT = 9200;
 
     /**
      * Main method to delete a record in Elasticsearch.
@@ -33,15 +27,19 @@ public final class DeleteRecord {
         String indexName = "record";
         String documentId = "1";
 
-        try (RestHighLevelClient client = new RestHighLevelClient(
-                RestClient.builder(new HttpHost(ELASTICSEARCH_HOST, ELASTICSEARCH_PORT, "http")))) {
+        try (ElasticsearchTransport transport = new RestClientTransport(
+                RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
+            ElasticsearchClient esClient = new ElasticsearchClient(transport);
 
-            DeleteRequest request = new DeleteRequest(indexName, documentId);
-            DeleteResponse deleteResponse = client.delete(request, RequestOptions.DEFAULT);
+            DeleteRequest request = DeleteRequest.of(g -> g
+                    .index(indexName)
+                    .id(documentId));
 
-            LOGGER.info("Delete Response: {}", deleteResponse.getResult());
-        } catch (Exception e) {
-            LOGGER.error("Exception: ", e);
+            DeleteResponse response = esClient.delete(request);
+
+            LOGGER.info("Delete Response: {}", response.result());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
