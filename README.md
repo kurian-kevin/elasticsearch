@@ -30,4 +30,6 @@
 ```
 ## Startup
 * Run ES7: `docker run --rm -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name es7 elasticsearch:7.17.18`
-* Run ES8: `docker run --rm -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --name es8 elasticsearch:8.12.2`
+* Run ES8: `docker run --rm -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --name es8 elasticsearch:8.12.2`
+* Run ES8(Security Disabled): `docker run --rm -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" --name es8 elasticsearch:8.12.2`
+* Run ES8(Security Disabled and ID Field Enabled): `docker run --rm -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "indices.id_field_data.enabled=true" --name es8 elasticsearch:8.12.2`

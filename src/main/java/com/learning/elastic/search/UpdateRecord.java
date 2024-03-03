@@ -30,7 +30,7 @@ public final class UpdateRecord {
 
         try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            OpenSearchClient esClient = new OpenSearchClient(transport);
+            OpenSearchClient osClient = new OpenSearchClient(transport);
 
             Map<String, Object> map = new HashMap<>();
             map.put("job", "Backend Developer");
@@ -41,7 +41,7 @@ public final class UpdateRecord {
                     .doc(map)
             );
 
-            UpdateResponse<Map> response = esClient.update(request, Map.class);
+            UpdateResponse<Map> response = osClient.update(request, Map.class);
 
             LOGGER.info("Update Response: {}", response.result());
         } catch (IOException e) {

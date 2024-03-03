@@ -30,7 +30,7 @@ public final class CreateRecord {
 
         try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            OpenSearchClient esClient = new OpenSearchClient(transport);
+            OpenSearchClient osClient = new OpenSearchClient(transport);
 
             Map<String, Object> map = new HashMap<>();
             map.put("name", "John Doe");
@@ -43,7 +43,7 @@ public final class CreateRecord {
                     .document(map)
             );
 
-            IndexResponse response = esClient.index(request);
+            IndexResponse response = osClient.index(request);
 
             LOGGER.info("Create Response: {}", response.result());
         } catch (IOException e) {

@@ -29,13 +29,13 @@ public final class ReadRecord {
 
         try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            OpenSearchClient esClient = new OpenSearchClient(transport);
+            OpenSearchClient osClient = new OpenSearchClient(transport);
 
             GetRequest request = GetRequest.of(g -> g
                     .index(indexName)
                     .id(documentId));
 
-            GetResponse<Map> response = esClient.get(request, Map.class);
+            GetResponse<Map> response = osClient.get(request, Map.class);
 
             if (response.found()) {
                 String sourceAsString = response.source().toString();

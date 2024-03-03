@@ -28,13 +28,13 @@ public final class DeleteRecord {
 
         try (RestClientTransport transport = new RestClientTransport(
                 RestClient.builder(new HttpHost("localhost", 9200)).build(), new JacksonJsonpMapper())) {
-            OpenSearchClient esClient = new OpenSearchClient(transport);
+            OpenSearchClient osClient = new OpenSearchClient(transport);
 
             DeleteRequest request = DeleteRequest.of(g -> g
                     .index(indexName)
                     .id(documentId));
 
-            DeleteResponse response = esClient.delete(request);
+            DeleteResponse response = osClient.delete(request);
 
             LOGGER.info("Delete Response: {}", response.result());
         } catch (IOException e) {
